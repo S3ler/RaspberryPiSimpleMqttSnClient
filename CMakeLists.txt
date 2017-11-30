@@ -9,25 +9,25 @@ add_definitions(-DPING)
 include_directories(lib/mqtt-sn-sockets)
 include_directories(lib/mqtt-sn-sockets/lib)
 include_directories(lib/mqtt-sn-sockets/lib/arduino-linux-abstraction)
-include_directories(lib/mqtt-sn-sockets/RadioHead)
+include_directories(lib/mqtt-sn-sockets/RadioHeadRpi)
 add_subdirectory(lib/mqtt-sn-sockets)
 
 set(SOURCE_FILES src/main.cpp)
 
 
 #[[set(SOURCE_FILES src/main.cpp
-        lib/mqtt-sn-sockets/RadioHead/RH_RF95.h
-        lib/mqtt-sn-sockets/RadioHead/RH_RF95.cpp
-        #lib/mqtt-sn-sockets/RadioHead/RHLinuxSPI.h
-        #lib/mqtt-sn-sockets/RadioHead/RHLinuxSPI.cpp
-        lib/mqtt-sn-sockets/RadioHead/RHGenericDriver.h
-        lib/mqtt-sn-sockets/RadioHead/RHGenericDriver.cpp
-        lib/mqtt-sn-sockets/RadioHead/RHDatagram.h
-        lib/mqtt-sn-sockets/RadioHead/RHDatagram.cpp
-        lib/mqtt-sn-sockets/RadioHead/RHReliableDatagram.h
-        lib/mqtt-sn-sockets/RadioHead/RHReliableDatagram.cpp
-        #lib/mqtt-sn-sockets/RadioHead/RHGenericSPI.h
-        #lib/mqtt-sn-sockets/RadioHead/RHGenericSPI.cpp
+        lib/mqtt-sn-sockets/RadioHeadRpi/RH_RF95.h
+        lib/mqtt-sn-sockets/RadioHeadRpi/RH_RF95.cpp
+        #lib/mqtt-sn-sockets/RadioHeadRpi/RHLinuxSPI.h
+        #lib/mqtt-sn-sockets/RadioHeadRpi/RHLinuxSPI.cpp
+        lib/mqtt-sn-sockets/RadioHeadRpi/RHGenericDriver.h
+        lib/mqtt-sn-sockets/RadioHeadRpi/RHGenericDriver.cpp
+        lib/mqtt-sn-sockets/RadioHeadRpi/RHDatagram.h
+        lib/mqtt-sn-sockets/RadioHeadRpi/RHDatagram.cpp
+        lib/mqtt-sn-sockets/RadioHeadRpi/RHReliableDatagram.h
+        lib/mqtt-sn-sockets/RadioHeadRpi/RHReliableDatagram.cpp
+        #lib/mqtt-sn-sockets/RadioHeadRpi/RHGenericSPI.h
+        #lib/mqtt-sn-sockets/RadioHeadRpi/RHGenericSPI.cpp
 
         lib/mqtt-sn-sockets/RF95Socket.h
         lib/mqtt-sn-sockets/RF95Socket.cpp
