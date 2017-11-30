@@ -1,0 +1,9 @@
+cmake-build-debug/*
+.idea/*
+lora_sender
+lora_receiver
+*.o
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
