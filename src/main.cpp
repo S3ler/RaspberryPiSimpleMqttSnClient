@@ -23,7 +23,7 @@ Edited by: Ramin Sangesari
 #include <RHReliableDatagram.h>
 #include <iostream>
 
-#define PING
+// #define PING
 
 RF95Socket socket;
 LoggerInterface logger;
