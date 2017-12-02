@@ -1,29 +1,20 @@
-/*
-Original code by: https://github.com/Snootlab/lora_chisterapi
-Edited by: Ramin Sangesari
-*/
 
-#define OWN_ADDRESS 0x02
-
-/*-----------------------------------------*/
+#ifndef Arduino_h
 #include <dirent.h>
 #include <fcntl.h>
-/*-----------------------------------------*/
-
 #include <stdlib.h>
 #include <unistd.h>
 #include <signal.h>
-
+#include <iostream>
 #include <chrono>
 #include <thread>
+#endif
+
 #include <LoggerInterface.h>
 #include <MqttSnMessageHandler.h>
 #include <RF95Socket.h>
 #include <RH_RF95.h>
 #include <RHReliableDatagram.h>
-#include <iostream>
-
-// #define PING
 
 RF95Socket socket;
 LoggerInterface logger;
@@ -31,6 +22,10 @@ MqttSnMessageHandler mqttSnMessageHandler;
 
 RH_RF95 rf95;
 RHReliableDatagram manager(rf95);
+
+#ifndef Arduino_h
+SerialLinux Serial;
+#endif
 
 #ifdef PING
 #define OWN_ADDRESS 0x02
@@ -41,16 +36,15 @@ uint8_t msg[] = {5, 'P', 'i', 'n', 'g'};
 #define OWN_ADDRESS 0x03
 #endif
 
-bool run;
 
-/* Signal the end of the software */
-void sigint_handler(int signal) {
-    run = false;
-}
 
 void setup() {
-    std::cout << "Starting" << std::endl;
+    Serial.begin(9600);
+    Serial.println("Starting");
+
+#ifndef Arduino_h
     wiringPiSetupGpio();
+#endif
 
     manager.setThisAddress(OWN_ADDRESS);
     socket.setRf95(&rf95);
@@ -61,18 +55,31 @@ void setup() {
     mqttSnMessageHandler.setSocket(&socket);
 
     if (!mqttSnMessageHandler.begin()) {
-        std::cout << "Failure init MqttSnMessageHandler" << std::endl;
+        Serial.println("Failure init MqttSnMessageHandler");
     } else {
-        std::cout << "Started" << std::endl;
+        Serial.println("Started");
+    }
 #ifdef PING
         mqttSnMessageHandler.send(&target_address, msg, (uint16_t) msg[0]);
+#ifdef RH_RF95_h
+        mqttSnMessageHandler.send(&target_address, msg, (uint16_t) msg[0]);
 #endif
-    }
+#endif
 }
+
 
 void loop() {
     mqttSnMessageHandler.loop();
 }
+
+#ifndef Arduino_h
+bool run;
+
+/* Signal the end of the software */
+void sigint_handler(int signal) {
+    run = false;
+}
+
 
 int main(int argc, char **argv) {
     run = true;
@@ -88,4 +95,5 @@ int main(int argc, char **argv) {
 
     return EXIT_SUCCESS;
 }
+#endif
 
