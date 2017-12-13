@@ -78,6 +78,7 @@ void setup() {
 #endif
 
     manager.setThisAddress(OWN_ADDRESS);
+    /*
     socket.setRf95(&rf95);
     socket.setManager(&manager);
     socket.setLogger(&logger);
@@ -96,6 +97,7 @@ void setup() {
     mqttSnMessageHandler.send(&target_address, msg, (uint16_t) msg[0]);
 #endif
 #endif
+     */
 }
 
 void loop() {

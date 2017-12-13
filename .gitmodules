@@ -1,3 +1,6 @@
+[submodule "lib/SimpleMqttSnClientCore"]
+	path = lib/SimpleMqttSnClientCore
+	url = https://github.com/S3ler/SimpleMqttSnClientCore.git
 [submodule "lib/mqtt-sn-sockets"]
 	path = lib/mqtt-sn-sockets
 	url = https://github.com/S3ler/mqtt-sn-sockets.git
