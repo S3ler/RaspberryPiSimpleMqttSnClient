@@ -5,7 +5,7 @@
 #include <ESP8266WiFi.h>
 #endif
 
-#include <Arduino.h>
+//#include <Arduino.h>
 #ifdef Arduino_h
 #include <SPI.h>
 #include <Ethernet.h>
@@ -22,20 +22,23 @@
 #include <thread>
 #include <string>
 #include <LoggerInterface.h>
+#include <arduino-linux-abstraction/src/Arduino.h>
+
 SerialLinux Serial;
 #endif
 
-#include <LinuxLogger.h>
 #include <MqttSnMessageHandler.h>
-#include <LinuxLogger.h>
 #include <RF95Socket.h>
 #include <RH_RF95.h>
 #include <RHReliableDatagram.h>
+#include <SimpleMqttSnClient.h>
+#include "LinuxLogger.h"
 
 
 RF95Socket socket;
-LoggerInterface logger;
+LinuxLogger logger;
 MqttSnMessageHandler mqttSnMessageHandler;
+SimpleMqttSnClient client;
 
 #ifdef ESP8266
 RH_RF95 rf95(2, 15);
@@ -53,7 +56,7 @@ uint8_t msg[] = {5, 'P', 'i', 'n', 'g'};
 #define OWN_ADDRESS 0x03
 #endif
 
-
+// Start
 void setup() {
     Serial.begin(9600);
     Serial.println("Starting");
@@ -76,28 +79,21 @@ void setup() {
 #ifndef Arduino_h
     wiringPiSetupGpio();
 #endif
-
+    // link socket dependencies
     manager.setThisAddress(OWN_ADDRESS);
-    /*
     socket.setRf95(&rf95);
     socket.setManager(&manager);
-    socket.setLogger(&logger);
-    socket.setMqttSnMessageHandler(&mqttSnMessageHandler);
-    mqttSnMessageHandler.setLogger(&logger);
-    mqttSnMessageHandler.setSocket(&socket);
 
-    if (!mqttSnMessageHandler.begin()) {
-        Serial.println("Failure init MqttSnMessageHandler");
+    // link components to
+    client.setSocketInterface(&socket);
+    client.setLoggerInterface(&logger);
+    client.setMqttSnMessageHandler(&mqttSnMessageHandler);
+
+    if (!client.begin()) {
+        Serial.println("Failure init SimpleMqttSnClient");
     } else {
         Serial.println("Started");
     }
-#ifdef PING
-    mqttSnMessageHandler.send(&target_address, msg, (uint16_t) msg[0]);
-#ifdef RH_RF95_h
-    mqttSnMessageHandler.send(&target_address, msg, (uint16_t) msg[0]);
-#endif
-#endif
-     */
 }
 
 void loop() {

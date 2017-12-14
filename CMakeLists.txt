@@ -4,14 +4,18 @@ project(RaspberryPiSimpleMqttSnClient)
 set(CMAKE_CXX_STANDARD 11)
 
 add_definitions(-DRH_PLATFORM=RH_PLATFORM_RP -D__RASPBERRY_PI_)
-add_definitions(-DPING)
+add_definitions(-DPONG)
+
+include_directories(lib/SimpleMqttSnClientCore)
+add_subdirectory(lib/SimpleMqttSnClientCore)
 
 include_directories(lib/mqtt-sn-sockets)
-include_directories(lib/mqtt-sn-sockets/lib)
-include_directories(lib/mqtt-sn-sockets/lib/arduino-linux-abstraction/src)
+#include_directories(lib/mqtt-sn-sockets/lib)
+#include_directories(lib/mqtt-sn-sockets/lib/arduino-linux-abstraction/src)
 include_directories(lib/mqtt-sn-sockets/RadioHeadRpi)
 add_subdirectory(lib/mqtt-sn-sockets)
 
+include_directories(lib/SimpleMqttSnClientCore/arduino-linux-abstraction/lib)
 
 
 set(SOURCE_FILES src/main.cpp
@@ -25,10 +29,11 @@ set(SOURCE_FILES src/main.cpp
 		lib/mqtt-sn-sockets/RadioHeadRpi/RHLinuxSPI.cpp
 		lib/mqtt-sn-sockets/RadioHeadRpi/RH_RF95.h
 		lib/mqtt-sn-sockets/RadioHeadRpi/RH_RF95.cpp
+		src/LinuxLogger.h
+		src/LinuxLogger.cpp
 )
 
-include_directories(lib/SimpleMqttSnClientCore)
-add_subdirectory(lib/SimpleMqttSnClientCore)
+
 
 add_executable(RaspberryPiSimpleMqttSnClient ${SOURCE_FILES})
-target_link_libraries(RaspberryPiSimpleMqttSnClient example-lib-rh96-socket arduino-linux-abstraction wiringPi)
+target_link_libraries(RaspberryPiSimpleMqttSnClient lib-rh96-socket arduino-linux-abstraction lib-SimpleMqttSnClient wiringPi pthread crypt rt)
