@@ -56,6 +56,7 @@ uint8_t msg[] = {5, 'P', 'i', 'n', 'g'};
 #define OWN_ADDRESS 0x03
 #endif
 
+
 // Start
 void setup() {
     Serial.begin(9600);
@@ -94,10 +95,103 @@ void setup() {
     } else {
         Serial.println("Started");
     }
+
+
+
+    delay(2000);
+    Serial.println("Waiting 40 Seconds for advertisment");
+    device_address* gw_adv = client.await_advertise(40000);
+    if(gw_adv == nullptr){
+        Serial.println("No Gateway Advertisment found.");
+    }else{
+        Serial.println("Gateway found.");
+    }
+
+    delay(1000);
+    Serial.println("SearchGW 10 Seconds.");
+    device_address* gw_info = client.search_gateway();
+    if(gw_info == nullptr){
+        Serial.println("No Gateway Info found.");
+    }else{
+        Serial.println("Gateway Info received.");
+    }
+
+
+    device_address* ping_addr = nullptr;
+    if(gw_info != nullptr){
+        delay(1000);
+
+        ping_addr = gw_info;
+        Serial.println("Pinging Searched Gateway (Info) - timeout 10s");
+        uint64_t ping_time = client.ping_gateway(ping_addr);
+        if(ping_time == 0){
+            Serial.println("No Pingresponse received.");
+        }else{
+            Serial.print("Received Pingresponse after: ");
+            Serial.print(ping_time);
+            Serial.println(" milliseconds.");
+        }
+    }
+    if(gw_adv != nullptr){
+        delay(1000);
+
+        ping_addr = gw_adv;
+        Serial.println("Pinging Gateway Advertisment - timeout 10s");
+        uint64_t ping_time = client.ping_gateway(ping_addr);
+        if(ping_time == 0){
+            Serial.println("No Pingresponse received.");
+        }else{
+            Serial.print("Received Pingresponse after: ");
+            Serial.print(ping_time);
+            Serial.println(" milliseconds.");
+        }
+    }
+
+    device_address* publish_addr = nullptr;
+    uint16_t predefined_topicId = 2;
+    bool retain = false;
+    uint8_t data[6] = {'H', 'e', 'l', 'l', 'o', 0 };
+    if(gw_info != nullptr){
+        delay(1000);
+        publish_addr = gw_info;
+        Serial.print("Publish QoS -1 Searched Gateway - ");
+
+        if(client.publish_m1(publish_addr,predefined_topicId, retain,
+                             (uint8_t *) &data,
+                             (uint16_t) sizeof(data))){
+            Serial.println("success");
+        }else{
+            Serial.println("failure");
+        }
+    }
+    if(gw_adv != nullptr){
+        delay(1000);
+        publish_addr = gw_adv;
+        Serial.print("Publish QoS -1 Gateway Advertisment - ");
+
+        if(client.publish_m1(publish_addr,predefined_topicId, retain,
+                             (uint8_t *) &data,
+                             (uint16_t) 6)){
+            Serial.println("success");
+        }else{
+            Serial.println("failure");
+        }
+    }
+
 }
 
 void loop() {
-    mqttSnMessageHandler.loop();
+    device_address* gw_info = nullptr;
+    Serial.println("SearchGW 10 Seconds.");
+    gw_info = client.search_gateway();
+    Serial.println(".");
+
+    if(gw_info == nullptr){
+        Serial.println("No Gateway Info found.");
+    }else{
+        Serial.println("Gateway Info received.");
+    }
+    client.loop();
 }
 
 #ifndef Arduino_h
