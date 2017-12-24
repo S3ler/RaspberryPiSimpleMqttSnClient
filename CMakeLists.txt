@@ -4,6 +4,7 @@ project(RaspberryPiSimpleMqttSnClient)
 set(CMAKE_CXX_STANDARD 11)
 
 add_definitions(-DRH_PLATFORM=RH_PLATFORM_RP -D__RASPBERRY_PI_)
+add_definitions(-DDRIVER_RH_NRF24)
 add_definitions(-DPONG)
 
 include_directories(lib/SimpleMqttSnClientCore)

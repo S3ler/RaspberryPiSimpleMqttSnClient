@@ -29,6 +29,7 @@ SerialLinux Serial;
 
 #include <MqttSnMessageHandler.h>
 #include <RF95Socket.h>
+#include <RH_NRF24.h>
 #include <RH_RF95.h>
 #include <RHReliableDatagram.h>
 #include <SimpleMqttSnClient.h>
@@ -40,12 +41,24 @@ LinuxLogger logger;
 MqttSnMessageHandler mqttSnMessageHandler;
 SimpleMqttSnClient client;
 
+#ifdef DRIVER_RH_RF95
 #ifdef ESP8266
-RH_RF95 rf95(2, 15);
+RH_RF95 rh_driver(2, 15);
 #else
-RH_RF95 rf95;
+RH_RF95 rh_driver;
 #endif
-RHReliableDatagram manager(rf95);
+#endif
+
+#ifdef DRIVER_RH_NRF24
+#ifdef ESP8266
+// TODO
+RH_NRF24 rh_driver(2, 15);
+#else
+RH_NRF24 rh_driver;
+#endif
+#endif
+
+RHReliableDatagram manager(rh_driver);
 
 #ifdef PING
 #define OWN_ADDRESS 0x05
@@ -80,9 +93,43 @@ void setup() {
 #ifndef Arduino_h
     wiringPiSetupGpio();
 #endif
+
+#ifdef DRIVER_RH_RF95
+    // Defaults after init are 434.0MHz, 13dBm, Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on
+    if (!rh_driver.init()) {
+        Serial.println("Failure init DRIVER_RH_RF95");
+    }
+
+#ifdef FREQUENCY
+    if (!rh_driver.setFrequency(FREQUENCY)) {
+        Serial.println("Failure set FREQUENCY");
+    }
+#endif
+
+#ifdef TX_POWER_PIN
+    if(!rh_driver.setTxPower(18, false)){
+        Serial.println("Failure set TX_POWER_PIN");
+    }
+#endif
+
+#ifdef MODEM_CONFIG_CHOICE
+    if(!rh_driver.setModemConfig(RH_RF95::MODEM_CONFIG_CHOICE)){
+        Serial.println("Failure set MODEM_CONFIG_CHOICE");
+    }
+#endif
+#endif
+#ifdef DRIVER_RH_NRF24
+    if (!rh_driver.init()) {
+        Serial.println("Failure init DRIVER_RH_NRF24");
+    }
+    if (!rh_driver.setRF(RH_NRF24::DataRate250kbps, RH_NRF24::TransmitPowerm18dBm)) {
+        Serial.println("Failure set DataRate250kbps, TransmitPowerm18dBm");
+    }
+#endif
+
     // link socket dependencies
     manager.setThisAddress(OWN_ADDRESS);
-    socket.setRf95(&rf95);
+    //socket.setRf95(&rf95);
     socket.setManager(&manager);
 
     // link components to
